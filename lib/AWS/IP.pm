@@ -21,8 +21,17 @@ use constant CACHE_KEY => 'AWS_IPS';
   use AWS::IP;
 
   my $aws = AWS::IP->new(600, '/tmp/aws_ip_cache');
+
+  # get the raw data as a Perl reference
   my $aws_ip_data = $aws->get_raw_data;
 
+  # check if an ip address is AWS
+  if ($aws->is_aws_ip('50.0.0.1')
+  {
+    ..
+  }
+
+  # get a list of AWS cidrs
   my $cidrs = $aws->get_cidrs;
 
   for (@$cidrs)
@@ -30,12 +39,8 @@ use constant CACHE_KEY => 'AWS_IPS';
     ...
   }
 
-  my $ec2_cidrs = $aws->get_cidrs_by_service('EC2');
-
-  # time passes, get updated ip list
-  $aws_ip_data = $aws->get_raw_data;
-
-  # or start a new program with the same cache_path
+  # time passes, cache has expired
+  $aws_ip_data = $aws->get_raw_data; # auto refreshes
 
 =head2 DESCRIPTION
 

@@ -8,15 +8,24 @@ AWS::IP - Get and search AWS IP ranges in a caching, auto-refreshing way
 
 =head1 VERSION
 
-version 0.01
+version 0.02
 
 =head2 SYNOPSIS
 
   use AWS::IP;
 
   my $aws = AWS::IP->new(600, '/tmp/aws_ip_cache');
+
+  # get the raw data as a Perl reference
   my $aws_ip_data = $aws->get_raw_data;
 
+  # check if an ip address is AWS
+  if ($aws->is_aws_ip('50.0.0.1')
+  {
+    ..
+  }
+
+  # get a list of AWS cidrs
   my $cidrs = $aws->get_cidrs;
 
   for (@$cidrs)
@@ -24,12 +33,8 @@ version 0.01
     ...
   }
 
-  my $ec2_cidrs = $aws->get_cidrs_by_service('EC2');
-
-  # time passes, get updated ip list
-  $aws_ip_data = $aws->get_raw_data;
-
-  # or start a new program with the same cache_path
+  # time passes, cache has expired
+  $aws_ip_data = $aws->get_raw_data; # auto refreshes
 
 =head2 DESCRIPTION
 
