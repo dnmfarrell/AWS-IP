@@ -1,0 +1,83 @@
+=pod
+
+=encoding UTF-8
+
+=head1 NAME
+
+AWS::IP - Get and search AWS IP ranges in a caching, auto-refreshing way
+
+=head1 VERSION
+
+version 0.01
+
+=head2 SYNOPSIS
+
+  use AWS::IP;
+
+  my $aws = AWS::IP->new(600, '/tmp/aws_ip_cache');
+  my $aws_ip_data = $aws->get_raw_data;
+
+  my $cidrs = $aws->get_cidrs;
+
+  for (@$cidrs)
+  {
+    ...
+  }
+
+  my $ec2_cidrs = $aws->get_cidrs_by_service('EC2');
+
+  # time passes, get updated ip list
+  $aws_ip_data = $aws->get_raw_data;
+
+  # or start a new program with the same cache_path
+
+=head2 DESCRIPTION
+
+AWS L<publish|https://ip-ranges.amazonaws.com/ip-ranges.json> their IP ranges, which periodically change. This module downloads and serializes the IP ranges into a Perl data hash reference. It caches the data, and if the cache expires, re-downloads a new version. This can be helpful if you want to block all AWS IP addresses and periodically refresh the blocked IPs.
+
+=head2 new ($cache_timeout_secs, [$cache_path])
+
+Creates a new AWS::IP object and sets up the cache. Requires an number for the cache timeout seconds. Optionally takes a cache path argument. If no cache path is supplied, AWS::IP will use a random temp directory. If you want to reuse the cache over multiple processes, provide a cache path.
+
+=head2 get_raw_data
+
+Returns the entire raw IP dataset as a Perl data structure.
+
+=head2 get_cidrs
+
+Returns an arrayref of the L<CIDRs|http://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing> in the AWS IP address data.
+
+=head2 get_cidrs_by_region ($region)
+
+Returns an arrayref of CIDRs matching the provided region.
+
+=head2 get_cidrs_by_service ($service)
+
+Returns an arrayref of CIDRs matching the provided service.
+
+=head2 get_regions
+
+Returns an arrayref of the regions in the AWS IP address data.
+
+=head2 get_services
+
+Returns an arrayref of the services (Amazon, EC2 etc) in the AWS IP address data.
+
+=head2 SEE ALSO
+
+L<AWS::Networks> - is similar to this module but does not provide cacheing.
+
+Amazon's L<page|http://docs.aws.amazon.com/general/latest/gr/aws-ip-ranges.html> on AWS IP ranges.
+
+=head1 AUTHOR
+
+David Farrell <dnmfarrell@cpan.org>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2015 by David Farrell.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut
