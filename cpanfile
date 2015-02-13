@@ -4,10 +4,16 @@ requires "File::Temp" => "0";
 requires "HTTP::Tiny" => "0";
 requires "IO::Socket::SSL" => "1.56";
 requires "JSON::XS" => "0";
+requires "Net::CIDR::Set" => "0";
 requires "Net::SSLeay" => "1.49";
 requires "constant" => "0";
 requires "strict" => "0";
 requires "warnings" => "0";
+
+on 'test' => sub {
+  requires "File::Slurp" => "0";
+  requires "Test::More" => "0";
+};
 
 on 'configure' => sub {
   requires "ExtUtils::MakeMaker" => "0";

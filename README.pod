@@ -39,6 +39,10 @@ AWS L<publish|https://ip-ranges.amazonaws.com/ip-ranges.json> their IP ranges, w
 
 Creates a new AWS::IP object and sets up the cache. Requires an number for the cache timeout seconds. Optionally takes a cache path argument. If no cache path is supplied, AWS::IP will use a random temp directory. If you want to reuse the cache over multiple processes, provide a cache path.
 
+=head2 ip_is_aws ($ip, [$service])
+
+Boolean method to test if an ip address is from AWS. Optionally takes a service name (AMAZON|EC2|CLOUDFRONT|ROUTE53|ROUTE53_HEALTHCHECKS) and restricts the check to AWS ip addresses for that service.
+
 =head2 get_raw_data
 
 Returns the entire raw IP dataset as a Perl data structure.
@@ -53,7 +57,7 @@ Returns an arrayref of CIDRs matching the provided region.
 
 =head2 get_cidrs_by_service ($service)
 
-Returns an arrayref of CIDRs matching the provided service.
+Returns an arrayref of CIDRs matching the provided service (AMAZON|EC2|CLOUDFRONT|ROUTE53|ROUTE53_HEALTHCHECKS).
 
 =head2 get_regions
 
