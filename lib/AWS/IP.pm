@@ -31,10 +31,21 @@ use constant CACHE_KEY => 'AWS_IPS';
     ..
   }
 
-  # get a list of AWS cidrs
+  # get a list of all AWS cidrs
   my $cidrs = $aws->get_cidrs;
 
   for (@$cidrs)
+  {
+    ...
+  }
+
+  # create your own ip checks
+  use Net::CIDR::Set;
+
+  my $ec2_cidrs = $aws->get_cidrs_by_service('EC2');
+  my $aws_ec2_set = Net::CIDR::Set->new( @$ec2_cidrs );
+
+  if ($aws_ec2_set->contains($ip)
   {
     ...
   }
@@ -52,7 +63,7 @@ Creates a new AWS::IP object and sets up the cache. Requires an number for the c
 
 =cut
 
-sub new
+sub new ($cache_timeout_seconds, [$cache_path])
 {
   croak 'Incorrect number of args passed to AWS::IP->new()' unless @_ >= 2 && @_ <= 3;
   my ($class, $cache_timeout_secs, $cache_path) = @_;
@@ -74,6 +85,8 @@ sub new
 =head2 ip_is_aws ($ip, [$service])
 
 Boolean method to test if an ip address is from AWS. Optionally takes a service name (AMAZON|EC2|CLOUDFRONT|ROUTE53|ROUTE53_HEALTHCHECKS) and restricts the check to AWS ip addresses for that service.
+
+If you are checking more than one ip address, it's more efficient to pull the CIDRs you want, then use L<Net::CIDR::Set> to test if the ips are present in the CIDRs (see example in SYNOPSIS).
 
 =cut
 
