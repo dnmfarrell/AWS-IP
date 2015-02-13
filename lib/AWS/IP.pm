@@ -6,6 +6,7 @@ use Carp;
 use HTTP::Tiny;
 use JSON::XS;
 use File::Temp 'tempdir';
+use Net::CIDR::Set;
 
 # required by HTTP::Tiny for https
 use IO::Socket::SSL 1.56;
@@ -65,6 +66,32 @@ sub new
         }, $class;
 }
 
+=head2 ip_is_aws ($ip, [$service])
+
+Boolean method to test if an ip address is from AWS. Optionally takes a service name (AMAZON|EC2|CLOUDFRONT|ROUTE53|ROUTE53_HEALTHCHECKS) and restricts the check to AWS ip addresses for that service.
+
+=cut
+
+sub ip_is_aws
+{
+  my ($self, $ip, $service) = @_;
+
+  croak 'Error must supply an ip address' unless $ip;
+
+  my $ip_ranges;
+
+  if ($service)
+  {
+    $ip_ranges = Net::CIDR::Set->new( map { $_->{ip_prefix} } grep { $_->{service} eq $service } @{$self->get_raw_data->{prefixes}});
+  }
+  else
+  {
+    $ip_ranges = Net::CIDR::Set->new( map { $_->{ip_prefix} } @{$self->get_raw_data->{prefixes}} );
+  }
+  $ip_ranges->contains($ip);
+}
+
+
 =head2 get_raw_data
 
 Returns the entire raw IP dataset as a Perl data structure.
@@ -108,18 +135,22 @@ Returns an arrayref of CIDRs matching the provided region.
 sub get_cidrs_by_region
 {
   my ($self, $region) = @_;
+
+  croak 'Error must provide region' unless $region;
   [ map { $_->{ip_prefix} } grep { $_->{region} eq $region } @{$self->get_raw_data->{prefixes}} ];
 }
 
 =head2 get_cidrs_by_service ($service)
 
-Returns an arrayref of CIDRs matching the provided service.
+Returns an arrayref of CIDRs matching the provided service (AMAZON|EC2|CLOUDFRONT|ROUTE53|ROUTE53_HEALTHCHECKS).
 
 =cut
 
 sub get_cidrs_by_service
 {
   my ($self, $service) = @_;
+
+  croak 'Error must provide service' unless $service;
   [ map { $_->{ip_prefix} } grep { $_->{service} eq $service } @{$self->get_raw_data->{prefixes}} ];
 }
 
@@ -175,15 +206,9 @@ sub _refresh_cache
   if ($response->{success})
   {
     my $entry = $self->{cache}->entry(CACHE_KEY);
+    $entry->set($response->{content});
 
-    if ($entry->exists)
-    {
-      $entry->set($response->{content});
-    }
-    else
-    {
-        $self->{cache}->set(CACHE_KEY, $response->{content});
-    }
+    # return the data
     $response->{content};
   }
   else
@@ -192,4 +217,14 @@ sub _refresh_cache
   }
 }
 
+sub _refresh_cache_from_string
+{
+  my ($self, $data) = @_;
+
+  my $entry = $self->{cache}->entry(CACHE_KEY);
+  $entry->set($data);
+
+  # return the data
+  $data;
+}
 1;
