@@ -1,0 +1,7 @@
+lib/AWS/IP.pm
+LICENSE
+Makefile.PL
+MANIFEST			This list of files
+README.pod
+t/aws.t
+t/ip-ranges.json
