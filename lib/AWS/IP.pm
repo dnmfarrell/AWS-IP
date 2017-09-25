@@ -14,6 +14,8 @@ use Net::SSLeay 1.49;
 
 use constant CACHE_KEY => 'AWS_IPS';
 
+our $VERSION = 0.03;
+
 # ABSTRACT: Get and search AWS IP ranges in a caching, auto-refreshing way
 
 =head2 SYNOPSIS
@@ -63,7 +65,7 @@ Creates a new AWS::IP object and sets up the cache. Requires an number for the c
 
 =cut
 
-sub new ($cache_timeout_seconds, [$cache_path])
+sub new
 {
   croak 'Incorrect number of args passed to AWS::IP->new()' unless @_ >= 2 && @_ <= 3;
   my ($class, $cache_timeout_secs, $cache_path) = @_;
