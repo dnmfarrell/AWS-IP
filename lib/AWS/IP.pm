@@ -14,7 +14,7 @@ use Net::SSLeay 1.49;
 
 use constant CACHE_KEY => 'AWS_IPS';
 
-our $VERSION = 0.03;
+our $VERSION = 0.04;
 
 # ABSTRACT: Get and search AWS IP ranges in a caching, auto-refreshing way
 
