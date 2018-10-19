@@ -25,7 +25,8 @@ my %WriteMakefileArgs = (
     "warnings" => 0
   },
   "TEST_REQUIRES" => {
-    "Test::More" => 0
+    "Test::More" => 0,
+    "Test::Exception" => 0,
   },
   "test" => {
     "TESTS" => "t/*.t"
