@@ -18,6 +18,10 @@ our $VERSION = 0.04;
 
 # ABSTRACT: Get and search AWS IP ranges in a caching, auto-refreshing way
 
+=head2 NAME
+
+AWS::IP - Get and search AWS IP ranges in a caching, auto-refreshing way
+
 =head2 SYNOPSIS
 
   use AWS::IP;
